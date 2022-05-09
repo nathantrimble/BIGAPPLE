@@ -5,11 +5,10 @@ from flask import render_template
 
 import pprint
 import os
+import pymongo
+import sys
 
-# This code originally from https://github.com/lepture/flask-oauthlib/blob/master/example/github.py
-# Edited by P. Conrad for SPIS 2016 to add getting Client Id and Secret from
-# environment variables, so that this will work on Heroku.
-# Edited by S. Adams for Designing Software for the Web to add comments and remove flash messaging
+
 
 app = Flask(__name__)
 
@@ -20,6 +19,11 @@ app.secret_key = os.environ['SECRET_KEY'] #used to sign session cookies
 oauth = OAuth(app)
 oauth.init_app(app) #initialize the app to be able to make requests for user information
 
+#mongo connections
+connection_string = os.environ["MONGO_CONNECTION_STRING"]
+db_name = os.environ["MONGO_DBNAME"]
+client = pymongo.MongoClient(connection_string)
+
 #Set up GitHub as OAuth provider
 github = oauth.remote_app(
     'github',
@@ -29,13 +33,13 @@ github = oauth.remote_app(
     base_url='https://api.github.com/',
     request_token_url=None,
     access_token_method='POST',
-    access_token_url='https://github.com/login/oauth/access_token',  
+    access_token_url='https://github.com/login/oauth/access_token',
     authorize_url='https://github.com/login/oauth/authorize' #URL for github's OAuth login
 )
 
 
 #context processors run before templates are rendered and add variable(s) to the template's context
-#context processors must return a dictionary 
+#context processors must return a dictionary
 #this context processor adds the variable logged_in to the conext for all templates
 @app.context_processor
 def inject_logged_in():
@@ -47,7 +51,7 @@ def home():
 
 #redirect to GitHub's OAuth page and confirm callback URL
 @app.route('/login')
-def login():   
+def login():
     return github.authorize(callback=url_for('authorized', _external=True, _scheme='https')) #callback URL must match the pre-configured callback URL
 
 @app.route('/logout')
@@ -60,7 +64,7 @@ def authorized():
     resp = github.authorized_response()
     if resp is None:
         session.clear()
-        message = 'Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args)      
+        message = 'Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args)
     else:
         try:
             session['github_token'] = (resp['access_token'], '') #save the token to prove that the user logged in
