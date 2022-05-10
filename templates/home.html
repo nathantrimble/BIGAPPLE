@@ -5,8 +5,12 @@
 {% block content %}
   <h1>Home</h1>
 
-<p>This is a sample application to demonstrate authenticating against github oauth,
-using Flask, on Heroku.</p>
+<p>This is a forum sharing information about New York City, and everything that goes on in the Big Apple.</p>
 
+<form action = "/forumpage" id="postform" method="post">
+    <textarea name="message" rows="6" cols="90"></textarea>
+    <br><br>
+    <input type="submit" value="Submit">
+</form>
 
 {% endblock %}
