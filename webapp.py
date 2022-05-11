@@ -26,7 +26,7 @@ connection_string = os.environ["MONGO_CONNECTION_STRING"]
 db_name = os.environ["MONGO_DBNAME"]
 client = pymongo.MongoClient(connection_string)
 db = client[db_name]
-    collection = db['nycstateofmind']
+collection = db['nycstateofmind']
 #Set up GitHub as OAuth provider
 github = oauth.remote_app(
     'github',
@@ -84,7 +84,9 @@ def authorized():
 
 @app.route('/forumpage', methods=['GET','POST'])
 def renderPage1():
-    
+    postcontent= request.form['message']
+    newdoc = {"Content" : postcontent , "Author":  session['user_data']['login'] }
+    collection.insert_one(newdoc)
     return render_template('forumpage.html')
 
 @app.route('/page2')
