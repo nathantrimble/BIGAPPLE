@@ -25,7 +25,8 @@ oauth.init_app(app) #initialize the app to be able to make requests for user inf
 connection_string = os.environ["MONGO_CONNECTION_STRING"]
 db_name = os.environ["MONGO_DBNAME"]
 client = pymongo.MongoClient(connection_string)
-
+db = client[db_name]
+    collection = db['nycstateofmind']
 #Set up GitHub as OAuth provider
 github = oauth.remote_app(
     'github',
@@ -81,13 +82,10 @@ def authorized():
     return render_template('message.html', message=message)
 
 
-@app.route('/forumpage')
+@app.route('/forumpage', methods=['GET','POST'])
 def renderPage1():
-    if 'user_data' in session:
-        user_data_pprint = pprint.pformat(session['user_data'])#format the user data nicely
-    else:
-        user_data_pprint = '';
-    return render_template('forumpage.html',dump_user_data=user_data_pprint)
+    
+    return render_template('forumpage.html')
 
 @app.route('/page2')
 def renderPage2():
