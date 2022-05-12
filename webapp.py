@@ -87,7 +87,9 @@ def renderPage1():
     postcontent= request.form['message']
     newdoc = {"Content" : postcontent , "Author":  session['user_data']['login'] }
     collection.insert_one(newdoc)
-    return render_template('forumpage.html')
+    for docs in collection.find():
+        postlist = docs
+    return render_template('forumpage.html', pl = postlist)
 
 @app.route('/page2')
 def renderPage2():
