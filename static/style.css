@@ -1,7 +1,16 @@
 body {
-
+    background-image: url(nycskyline.jpg);
 }
 
 #content {
      margin-left: 20px;
+}
+h1{
+    text-align: center;
+}
+h4{
+    text-align: center;
+}
+#postform{
+    text-align: center;
 }
