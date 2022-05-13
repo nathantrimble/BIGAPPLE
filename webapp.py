@@ -88,12 +88,12 @@ def renderPage1():
     newdoc = {"Content" : postcontent , "Author":  session['user_data']['login'] }
     collection.insert_one(newdoc)
     for docs in collection.find():
-        postlist = docs
+        postlist = pprint.pprint(docs)
     return render_template('forumpage.html', pl = postlist)
 
-@app.route('/page2')
-def renderPage2():
-    return render_template('page2.html')
+@app.route('/about')
+def renderAboutPage():
+    return render_template('about.html')
 
 @app.route('/googleb4c3aeedcc2dd103.html')
 def render_google_verification():
