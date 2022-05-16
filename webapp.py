@@ -12,7 +12,7 @@ import sys
 
 app = Flask(__name__)
 
-app.debug = False #Change this to False for production
+app.debug = True #Change this to False for production
 #os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1' #Remove once done debugging
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -87,8 +87,12 @@ def renderPage1():
     postcontent= request.form['message']
     newdoc = {"Content" : postcontent , "Author":  session['user_data']['login'] }
     collection.insert_one(newdoc)
+    postlist = ""
     for docs in collection.find():
-        postlist = pprint.pprint(docs)
+        pc = docs['Content']
+        pa = docs['Author']
+        postlist = postlist + pc + " #$% " + pa + " #$% "
+
     return render_template('forumpage.html', pl = postlist)
 
 @app.route('/about')
