@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, session, request, jsonify
 from flask_oauthlib.client import OAuth
 #from flask_oauthlib.contrib.apps import github #import to make requests to GitHub's OAuth
-from flask import render_template
+from flask import render_template, Markup
 
 import pprint
 import os
@@ -91,7 +91,7 @@ def renderPage1():
     for docs in collection.find():
         pc = docs['Content']
         pa = docs['Author']
-        postlist = postlist + pc + " #$% " + pa + " #$% "
+        postlist += Markup("<div>" + pc + " #$% " + pa + "</div>")
 
     return render_template('forumpage.html', pl = postlist)
 
