@@ -91,7 +91,8 @@ def renderPage1():
     for docs in collection.find():
         pc = docs['Content']
         pa = docs['Author']
-        postlist += Markup("<div>" + pc + " #$% " + pa + "</div>")
+        postlist += Markup('<div class="card"> <div class="card-body"> <h4 class="card-title">' + pa + '</h4> <p class="card-text">' + pc + '</p> </div></div>')
+
 
     return render_template('forumpage.html', pl = postlist)
 
