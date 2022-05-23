@@ -84,6 +84,9 @@ def authorized():
 
 @app.route('/forumpage', methods=['GET','POST'])
 def renderPage1():
+    if request.method = POST{
+    
+    }
     postcontent= request.form['message']
     newdoc = {"Content" : postcontent , "Author":  session['user_data']['login'] }
     collection.insert_one(newdoc)
@@ -91,7 +94,7 @@ def renderPage1():
     for docs in collection.find():
         pc = docs['Content']
         pa = docs['Author']
-        postlist += Markup('<div class="card"> <div class="card-body"> <h4 class="card-title">' + pa + '</h4> <p class="card-text">' + pc + '</p> </div></div>')
+        postlist += Markup('<div class="card"> <div class="card-body"> <h4 class="card-title">' + pc + '</h4> <p class="card-text">' + pa + '</p>  <a href="#" class="card-link">Reply</a>  <a href="#" class="card-link">Like</a>  <a href="#" class="card-link">Dislike</a> </div></div>')
 
 
     return render_template('forumpage.html', pl = postlist)
