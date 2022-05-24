@@ -84,12 +84,12 @@ def authorized():
 
 @app.route('/forumpage', methods=['GET','POST'])
 def renderPage1():
-    if request.method = POST{
-    
-    }
-    postcontent= request.form['message']
-    newdoc = {"Content" : postcontent , "Author":  session['user_data']['login'] }
-    collection.insert_one(newdoc)
+    if request.method == 'POST':
+        postcontent= request.form['message']
+        newdoc = {"Content" : postcontent , "Author":  session['user_data']['login'] }
+        collection.insert_one(newdoc)
+
+
     postlist = ""
     for docs in collection.find():
         pc = docs['Content']
