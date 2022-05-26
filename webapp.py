@@ -60,14 +60,17 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
-    return render_template('message.html', message='You were logged out')
+    alertm = Markup('<div class="alert alert-info">You were logged out</div>')
+    return render_template('home.html', am = alertm)
 
 @app.route('/login/authorized')
 def authorized():
     resp = github.authorized_response()
+    alertm = ''
     if resp is None:
         session.clear()
         message = 'Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args)
+        alertm = Markup('<div class="alert alert-danger">'+ message +'</div>')
     else:
         try:
             session['github_token'] = (resp['access_token'], '') #save the token to prove that the user logged in
@@ -75,11 +78,13 @@ def authorized():
             #pprint.pprint(vars(github['/email']))
             #pprint.pprint(vars(github['api/2/accounts/profile/']))
             message='You were successfully logged in as ' + session['user_data']['login'] + '.'
+            alertm = Markup('<div class="alert alert-success">'+ message +'</div>')
         except Exception as inst:
             session.clear()
             print(inst)
             message='Unable to login, please try again.  '
-    return render_template('message.html', message=message)
+            alertm = Markup('<div class="alert alert-info">'+ message + '</div>')
+    return render_template('home.html', am=alertm)
 
 
 @app.route('/forumpage', methods=['GET','POST'])
