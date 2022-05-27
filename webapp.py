@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, session, request, jsonify
 from flask_oauthlib.client import OAuth
 #from flask_oauthlib.contrib.apps import github #import to make requests to GitHub's OAuth
 from flask import render_template, Markup
+from bson.objectid import ObjectId
 
 import pprint
 import os
@@ -89,18 +90,38 @@ def authorized():
 
 @app.route('/forumpage', methods=['GET','POST'])
 def renderPage1():
-    if request.method == 'POST':
+    if request.method == 'POST' and 'github_token' in session:
         postcontent= request.form['message']
-        newdoc = {"Content" : postcontent , "Author":  session['user_data']['login'] }
+        newdoc = {"Content" : postcontent , "Author":  session['user_data']['login'], "Likes" : 0 , "Dislikes" : 0 }
         collection.insert_one(newdoc)
-
+    elif  request.method == 'POST' and 'github_token' not in session:
+        return redirect('/')
 
     postlist = ""
     for docs in collection.find():
         pc = docs['Content']
         pa = docs['Author']
-        postlist += Markup('<div class="card"> <div class="card-body"> <h4 class="card-title">' + pc + '</h4> <p class="card-text">' + pa + '</p>  <a href="#" class="card-link">Reply</a>  <a href="#" class="card-link">Like</a>  <a href="#" class="card-link">Dislike</a> </div></div>')
+        plikes = str(docs['Likes'])
+        pdislikes = str(docs['Dislikes'])
+        pid = str(docs["_id"])
+        postlist += Markup('<div class="card"> <div class="card-body"> <h4 class="card-title">' + pc + '</h4> <p class="card-text">' + pa + '</p>   <a href = "#" target= "_parent"><button type="button" class="btn btn-outline-primary">Reply</button></a> <a href = "/forumpaged" target= "_parent"><button type="button" class="btn btn-outline-success" name = "ObjectID" value =' + pid +'>Like: '+ plikes +'</button></a>  <a href = "/forumpaged" target= "_parent"><button type="button" class="btn btn-outline-danger" name = "ObjectID" value =' + pid +'>Dislike: '+ pdislikes +'</button></a> </div></div>')
+    return render_template('forumpage.html', pl = postlist)
 
+@app.route('/forumpaged', methods=['GET','POST'])
+def updateLD():
+    print(request)
+    buttonname = request.form['ObjectID']
+    query = {"_id" : buttonname}
+    changes = {'$set':{'Likes':5}}
+    collection.update_one(query,changes)
+    postlist = ""
+    for docs in collection.find():
+        pc = docs['Content']
+        pa = docs['Author']
+        plikes = str(docs['Likes'])
+        pdislikes = str(docs['Dislikes'])
+        pid = str(docs["_id"])
+        postlist += Markup('<div class="card"> <div class="card-body"> <h4 class="card-title">' + pc + '</h4> <p class="card-text">' + pa + '</p>   <a href = "#" target= "_parent"><button type="button" class="btn btn-outline-primary">Reply</button></a> <a href = "/forumpaged" target= "_parent"><button type="button" class="btn btn-outline-success" name = "ObjectID"  value =' + pid +'>Like: '+ plikes +'</button></a>  <a href = "/forumpaged" target= "_parent"><button type="button" class="btn btn-outline-danger" name = "ObjectID" value =' + pid +'>Dislike: '+ pdislikes +'</button></a> </div></div>')
 
     return render_template('forumpage.html', pl = postlist)
 
