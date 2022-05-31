@@ -104,7 +104,7 @@ def renderPage1():
         plikes = str(docs['Likes'])
         pdislikes = str(docs['Dislikes'])
         pid = str(docs["_id"])
-        postlist += Markup('<div class="card"> <div class="card-body"> <h4 class="card-title">' + pc + '</h4> <p class="card-text">' + pa + '</p>   <a href = "#" target= "_parent"><button type="button" class="btn btn-outline-primary">Reply</button></a> <a href = "/forumpaged" target= "_parent"><button type="button" class="btn btn-outline-success" name = "ObjectID" value =' + pid +'>Like: '+ plikes +'</button></a>  <a href = "/forumpaged" target= "_parent"><button type="button" class="btn btn-outline-danger" name = "ObjectID" value =' + pid +'>Dislike: '+ pdislikes +'</button></a> </div></div>')
+        postlist += Markup('<div class="card"> <div class="card-body"> <h4 class="card-title">' + pc + '</h4> <p class="card-text">' + pa + '</p>    <form action="/forumpaged" method="POST"><input type="submit" value=' + pid +' class="btn btn-outline-success" name="ObjectID" id="likeb"><label for="likeb">Like: '+ plikes +'</label></form>  <form action="/forumpaged" method="POST"><input type="submit" value=' + pid +' class="btn btn-outline-danger" name="ObjectID" id="dislikeb"><label for="dislikeb">Dislike: '+ pdislikes +'</label></form> </div></div>')
     return render_template('forumpage.html', pl = postlist)
 
 @app.route('/forumpaged', methods=['GET','POST'])
@@ -112,7 +112,7 @@ def updateLD():
     print(request)
     buttonname = request.form['ObjectID']
     query = {"_id" : buttonname}
-    changes = {'$set':{'Likes':5}}
+    changes = {'$set':{'Dislikes':5}}
     collection.update_one(query,changes)
     postlist = ""
     for docs in collection.find():
@@ -121,8 +121,7 @@ def updateLD():
         plikes = str(docs['Likes'])
         pdislikes = str(docs['Dislikes'])
         pid = str(docs["_id"])
-        postlist += Markup('<div class="card"> <div class="card-body"> <h4 class="card-title">' + pc + '</h4> <p class="card-text">' + pa + '</p>   <a href = "#" target= "_parent"><button type="button" class="btn btn-outline-primary">Reply</button></a> <a href = "/forumpaged" target= "_parent"><button type="button" class="btn btn-outline-success" name = "ObjectID"  value =' + pid +'>Like: '+ plikes +'</button></a>  <a href = "/forumpaged" target= "_parent"><button type="button" class="btn btn-outline-danger" name = "ObjectID" value =' + pid +'>Dislike: '+ pdislikes +'</button></a> </div></div>')
-
+        postlist += Markup('<div class="card"> <div class="card-body"> <h4 class="card-title">' + pc + '</h4> <p class="card-text">' + pa + '</p>   <form action="/forumpaged" method="POST"><input type="submit" value=' + pid +' class="btn btn-outline-sucess" name="ObjectID" id="likeb"><label for="likeb">Like: '+ plikes +'</label></form>  <form action="/forumpaged" method="POST"><input type="submit" value=' + pid +' class="btn btn-outline-danger" name="ObjectID" id="dislikeb"><label for="dislikeb">Dislike: '+ pdislikes +'</label></form> </div></div>')
     return render_template('forumpage.html', pl = postlist)
 
 @app.route('/about')
